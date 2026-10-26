@@ -83,8 +83,12 @@ class SecretStore(context: Context) {
 }
 
 object Backups {
-    const val MAX_BYTES = 4 * 1024 * 1024
-    fun export(state: AppState): String = AppJson.encodeToString(state.copy(active = null))
+    const val MAX_BYTES = 32 * 1024 * 1024
+    fun export(state: AppState): String {
+        val text=AppJson.encodeToString(state.copy(active=null))
+        require(text.toByteArray().size<=MAX_BYTES){"فایل پشتیبان بیش از حد بزرگ است."}
+        return text
+    }
     fun decode(text: String): AppState {
         require(text.toByteArray().size <= MAX_BYTES) { "فایل پشتیبان بیش از حد بزرگ است." }
         val s = AppJson.decodeFromString<AppState>(text)

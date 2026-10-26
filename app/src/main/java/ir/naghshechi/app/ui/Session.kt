@@ -178,7 +178,7 @@ import kotlinx.coroutines.delay
                 Subhead("نتیجهٔ مأموریت ${player.name}")
                 Outcome.entries.filter{it!=Outcome.PENDING}.forEach{outcome->Choice(outcome.label,s.outcomes[targetId]==outcome){vm.outcome(outcome)}}
                 Text("خود بازیکن توضیح بدهد؛ در اختلاف، اکثریت دیگران داوری کنند. تساوی یعنی امتیاز مورد اختلاف ثبت نشود.",color=Muted,style=MaterialTheme.typography.bodySmall)
-                if(guessers.isNotEmpty())Subhead("نتیجهٔ حدس‌ها")
+                Subhead("نتیجهٔ حدس‌ها")
                 guessers.forEach{g->PanelCard{
                     Text(s.players.first{it.id==g.by}.name,style=MaterialTheme.typography.titleMedium)
                     Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){
@@ -186,6 +186,11 @@ import kotlinx.coroutines.delay
                         FilterChip(g.verdict==Verdict.WRONG,{vm.verdict(g.by,Verdict.WRONG)},label={Text("✕ غلط ۱−")})
                     }
                 }}
+                s.players.filter{p->p.id!=targetId && guessers.none{it.by==p.id}}.forEach{p->
+                    Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically){
+                        Text(p.name,Modifier.weight(1f),color=Muted);Tag("— حدس نزد • صفر",Muted)
+                    }
+                }
                 Subhead("این مأموریت چطور بود؟","اختیاری")
                 FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp)){
                     listOf("خوب بود","سخت بود","مبهم بود","نامناسب بود").forEach{value->FilterChip(s.feedback[targetId]==value,{vm.feedback(value)},label={Text(value)})}
@@ -225,13 +230,13 @@ import kotlinx.coroutines.delay
         Text("${scores.first().total.fa()} امتیاز",style=MaterialTheme.typography.titleLarge)
         if(s.rules.reward.isNotBlank())Text("جایزهٔ توافقی: ${s.rules.reward}",style=MaterialTheme.typography.bodyMedium)
     }
-    Subhead("جدول این دور","مأموریت / حدس / جریمه")
+    Subhead("جدول این دور","جزئیات امتیاز")
     scores.forEachIndexed{index,score->PanelCard{
         Row(verticalAlignment=Alignment.CenterVertically){
-            Tag((index+1).fa(),if(score.player.id in winners)Gold else Mint)
+            Tag((scores.count{it.total>score.total}+1).fa(),if(score.player.id in winners)Gold else Mint)
             Spacer(Modifier.width(12.dp));Column(Modifier.weight(1f)){
                 Text(score.player.name,style=MaterialTheme.typography.titleMedium)
-                Text("${score.mission.fa()} / ${score.guesses.fa()} / ${score.penalty.fa()}",color=Muted,style=MaterialTheme.typography.bodySmall)
+                Text("مأموریت ${score.mission.fa()} • حدس ${score.guesses.fa()} • جریمه ${score.penalty.fa()}",color=Muted,style=MaterialTheme.typography.bodySmall)
             }
             Text(score.total.fa(),color=Gold,style=MaterialTheme.typography.headlineMedium)
         }

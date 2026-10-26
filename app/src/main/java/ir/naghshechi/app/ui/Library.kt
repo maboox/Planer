@@ -101,7 +101,7 @@ private fun date(millis:Long)=SimpleDateFormat("yyyy/MM/dd",Locale.US).format(Da
                     require(bytes.size<=Backups.MAX_BYTES)
                     String(bytes,Charsets.UTF_8)
                 } ?: error("فایل باز نشد")}
-                Backups.decode(text);staged=text
+                withContext(Dispatchers.IO){Backups.decode(text)};staged=text
             }catch(_:Exception){vm.error.value="فایل پشتیبان معتبر نیست، نسخه‌اش پشتیبانی نمی‌شود یا بیش از حد بزرگ است."}
         }
     }

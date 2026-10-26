@@ -151,9 +151,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         } catch (_: Exception) { error.value="تنظیمات یا کلید ذخیره نشد؛ دوباره امتحان کن." }
     } }
     fun removeKey() { secrets.clear(); hasKey.value=false }
-    fun importBackup(text: String) = update {
-        require(it.active == null) { "اول بازی فعال را تمام کن." }; Backups.decode(text)
-    }
+    fun importBackup(text: String) { viewModelScope.launch {
+        try {
+            val parsed=withContext(Dispatchers.IO){Backups.decode(text)}
+            lock.withLock {
+                require(mutable.value.active==null){"اول بازی فعال را تمام کن."}
+                storage.save(parsed);mutable.value=parsed
+            }
+        }catch(_:Exception){error.value="بازیابی انجام نشد؛ فایل را بررسی کن و اول بازی فعال را تمام کن."}
+    } }
     fun erase() { update { AppState() }; removeKey(); savePreferences(Preferences(),null) }
     override fun onCleared() { storage.close(); super.onCleared() }
 }
