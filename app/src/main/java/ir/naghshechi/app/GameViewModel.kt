@@ -32,7 +32,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             hasKey.value = withContext(Dispatchers.IO) { secrets.read().isNotBlank() }
             val loaded=storage.load()
             // Existing sessions/history retain the exact cards they were dealt.
-            mutable.value = loaded.copy(generated=loaded.generated.filter{it.contentRevision>=2})
+            // Eligibility rules exclude older editions from new deals without deleting owned cards.
+            mutable.value = loaded
             ready.value = true
         } catch (_: Exception) { error.value = "اطلاعات خوانده نشد. برای محافظت از سابقه، چیزی جایگزین نشد. اپ را دوباره باز کن." }
     } }

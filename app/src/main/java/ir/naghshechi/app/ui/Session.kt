@@ -12,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -67,19 +69,34 @@ import kotlinx.coroutines.delay
         Text(m.title,style=MaterialTheme.typography.headlineLarge,color=Gold)
         Text(m.style.label,color=Muted,style=MaterialTheme.typography.bodySmall)
         HorizontalDivider(color=Line)
-        MissionSection("مأموریت تو",m.goal,Cream)
-        if(m.twist.isNotBlank())Note(m.twist,Icons.Rounded.Psychology,Gold)
-        MissionSection("موفقیت یعنی",m.success,Mint)
-        MissionSection("حساب نیست",m.invalid,Coral)
-        HorizontalDivider(color=Line)
-        MissionSection("مجاز است",m.allowed,Muted)
+        Text("مأموریت تو",style=MaterialTheme.typography.titleMedium)
+        m.steps.ifEmpty{listOf(m.goal)}.forEachIndexed{index,step->
+            Row(horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.Top){
+                Box(Modifier.size(27.dp).background(Gold.copy(alpha=.12f),RoundedCornerShape(8.dp)),contentAlignment=Alignment.Center){
+                    Text((index+1).fa(),color=Gold,style=MaterialTheme.typography.labelLarge)
+                }
+                Text(step,style=MaterialTheme.typography.bodyLarge,modifier=Modifier.weight(1f))
+            }
+        }
+        if(m.example.isNotBlank())MissionInfoBox("یک نمونه از نتیجهٔ درست",m.example,Icons.Rounded.Lightbulb,
+            Color(0xFFF1D887),Color(0xFF2C2819))
+        MissionInfoBox("موفقیت یعنی",m.success,Icons.Rounded.OutlinedFlag,
+            Color(0xFF94DBFF),Color(0xFF142935))
+        MissionInfoBox("مجاز است",m.allowed,Icons.Rounded.CheckCircle,
+            Color(0xFF9AE7B5),Color(0xFF132B20))
+        MissionInfoBox("حساب نیست",m.invalid,Icons.Rounded.Block,
+            Color(0xFFFFB1BE),Color(0xFF321C25))
         Text(m.boundary,color=Muted,style=MaterialTheme.typography.bodySmall)
     }
 }
-@Composable private fun MissionSection(title:String,text:String,accent:androidx.compose.ui.graphics.Color){
-    Column(verticalArrangement=Arrangement.spacedBy(5.dp)) {
-        Text(title,style=MaterialTheme.typography.labelMedium,color=accent)
-        Text(text,style=if(title=="مأموریت تو")MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,color=Cream)
+@Composable private fun MissionInfoBox(title:String,text:String,icon:ImageVector,accent:Color,background:Color){
+    Column(Modifier.fillMaxWidth().background(background,RoundedCornerShape(13.dp))
+        .border(1.dp,accent.copy(alpha=.4f),RoundedCornerShape(13.dp)).padding(14.dp),verticalArrangement=Arrangement.spacedBy(9.dp)) {
+        Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){
+            Icon(icon,null,tint=accent,modifier=Modifier.size(21.dp))
+            Text(title,style=MaterialTheme.typography.titleMedium,color=accent)
+        }
+        Text(text,style=MaterialTheme.typography.bodyLarge,color=Cream)
     }
 }
 
@@ -119,7 +136,7 @@ import kotlinx.coroutines.delay
                 }
             }
             PageTitle(if(s.rules.minutes==0)"عملیات باز" else "عملیات ${if(s.running)"در جریانه" else "متوقفه"}",s.groupName,"رفتارها عادی‌اند؛ نیت‌ها شاید نه.")
-            if(s.assignments.any{it.mission.contentRevision<2})Note("این دور با مأموریت‌های نسخهٔ قدیمی شروع شده. برای محتوای بازنویسی‌شده، این دور را ببند و بازی تازه بساز.",Icons.Rounded.Info,Gold)
+            if(s.assignments.any{it.mission.contentRevision<2 || it.mission.readingRevision<2})Note("این دور با متن نسخهٔ قبلی شروع شده. برای توضیح‌های مرحله‌به‌مرحلهٔ تازه، بازی جدید بساز.",Icons.Rounded.Info,Gold)
             if(s.rules.minutes==0)PanelCard {
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(16.dp)){
                     Icon(Icons.Rounded.AllInclusive,null,tint=Gold,modifier=Modifier.size(54.dp))

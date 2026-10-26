@@ -75,7 +75,12 @@ class UiFlowTest {
                 assertEquals(missionId,vm.state.value.active!!.assignments.first().mission.id)
                 ui.onNodeWithText("مأموریت تو").assertDoesNotExist()
                 unlock()
+                screenshot("mission-steps")
                 ui.onNodeWithText("موفقیت یعنی").performScrollTo().assertIsDisplayed()
+                ui.onNodeWithText("یک نمونه از نتیجهٔ درست").performScrollTo().assertIsDisplayed()
+                ui.onNodeWithText("مجاز است").performScrollTo().assertIsDisplayed()
+                ui.onNodeWithText("حساب نیست").performScrollTo().assertIsDisplayed()
+                ui.onNodeWithText(vm.state.value.active!!.assignments.first().mission.invalid).performScrollTo().assertIsDisplayed()
                 screenshot("mission")
             }
             click(if(i==3)"فهمیدم؛ عملیات شروع بشه!" else "فهمیدم؛ گوشی برای نفر بعد")

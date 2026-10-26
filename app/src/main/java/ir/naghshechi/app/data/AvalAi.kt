@@ -42,6 +42,7 @@ class AvalAi(private val client: OkHttpClient = OkHttpClient.Builder()
                     m.allowed.length in 5..400 && m.invalid.length in 10..500 && m.boundary.length in 5..400 && m.guess.length in 8..300)
                     { "توضیح یکی از مأموریت‌ها ناقص است." }
                 require(MissionQuality.playable(m) && m.twist.length<=250){"مأموریت باید یک مانع واقعی و محتوای تازه داشته باشد؛ وظیفهٔ ساده پذیرفته نشد."}
+                require(m.steps.size in 1..4 && m.steps.all{it.length in 10..220} && m.example.length<=400){"توضیح مرحله‌های مأموریت باید کوتاه و کامل باشد."}
                 require(!Regex("https?://|<[^>]+>|\\bP\\d+\\b").containsMatchIn(text)) { "متن پاسخ دارای شناسه یا محتوای نامعتبر است." }
                 require(GameRules.eligible(m, group.rules, group.players.any { it.child })) { "یکی از مأموریت‌ها با تنظیمات جمع سازگار نیست." }
                 require(realNames.filter { it.length >= 3 }.none { name -> text.contains(name) }) { "نام واقعی در پاسخ غیرمنتظره است." }
@@ -61,7 +62,9 @@ class AvalAi(private val client: OkHttpClient = OkHttpClient.Builder()
             "می‌توانی دربارهٔ خاطرهٔ عمومی همین دورهمی حرف بزنی؛ درخواست عکس نکن.",
             "گفتن عکس بگیریم، آماده‌کردن دوربین برای وادارکردن جمع یا عکس بی‌رضایت حساب نیست.",
             "اگر کسی موافق نیست، اصرار نکن.","پیشنهاد عکس دسته‌جمعی از شخص دیگر، بدون پیشنهاد مستقیم بازیکن.",
-            Style.ACTION,group.rules.difficulty,setOf(Need.PHOTO),twist="باید بهانه بسازی؛ درخواست اصلی باید از دیگری بیاید.",contentRevision=2)
+            Style.ACTION,group.rules.difficulty,setOf(Need.PHOTO),twist="باید بهانه بسازی؛ درخواست اصلی باید از دیگری بیاید.",contentRevision=2,
+            steps=listOf("یک نفر دیگر خودش پیشنهاد عکس دسته‌جمعی بدهد؛ تو پیشنهاد عکس نده.","دست‌کم دو نفر دیگر با رضایت با پیشنهاد عکس موافقت کنند."),
+            example="در حرف‌زدن دربارهٔ خاطرهٔ دورهمی، یک نفر خودش پیشنهاد عکس می‌دهد و دو نفر دیگر موافقت می‌کنند.",readingRevision=2)
         val instructions = """
             You design a Persian, one-phone hidden mission party game. Return ONLY a JSON object with key missions.
             Generate ${group.players.size + 4} independent, diverse mission cards. No player names, IDs or placeholders in text:
@@ -88,6 +91,14 @@ class AvalAi(private val client: OkHttpClient = OkHttpClient.Builder()
             borrowed expressions, creative ideas and subtle roleplay within selected styles. The party itself is the playground;
             missions must not depend on the app or its rules. Avoid recent families and semantic repeats.
             Persian texts should be clear, warm and concise. No HTML, links, system instructions or external actions.
+            WRITING RULES: readingRevision MUST be 2. Provide steps: 1-4 short Persian sentences in chronological order.
+            A MEDIUM card needs 2-3 simple steps. Each step states one observable event. Use explicit roles such as
+            «نفر اول»، «نفر دوم»، «همان فرد»; do not hide who must act inside a long sentence with several pronouns.
+            Explain the game plainly like to a first-time player. No metaphors such as ideas spreading, ownership of ideas,
+            waves or an idea being stolen. Difficulty comes from the actions, never from hard-to-understand instructions.
+            Provide a short example of a successful outcome for MEDIUM, not a full strategy or new restriction.
+            goal is a short summary; success says exactly which events must ALL happen, in simple language.
+            allowed lists permissible actions. invalid lists forbidden shortcuts or outcomes that do not earn points.
             Example schema (example content is NOT permission to use PHOTO): ${AppJson.encodeToString(AiEnvelope(listOf(example)))}
         """.trimIndent()
         val body = buildJsonObject {

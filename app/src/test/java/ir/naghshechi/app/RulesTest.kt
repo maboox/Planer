@@ -128,4 +128,21 @@ class RulesTest {
         assertFalse(GameRules.eligible(photo,group.rules,false))
         assertTrue(GameRules.eligible(photo,group.rules.copy(allowed=setOf(Need.PHOTO)),false))
     }
+    @Test fun mediumCardsExplainActorsAndSuccessInShortSteps(){
+        val medium=pool.filter{it.difficulty==Difficulty.MEDIUM}
+        assertEquals(42,medium.size)
+        medium.forEach{m->
+            assertEquals(2,m.readingRevision)
+            assertTrue(m.steps.size in 2..3)
+            assertTrue(m.steps.all{it.length in 10..220})
+            assertTrue(m.example.length in 30..400)
+            assertTrue(m.goal.length<=200)
+        }
+    }
+    @Test fun oldReadingEditionCannotReappearInFreshDeals(){
+        val card=pool.first{GameRules.eligible(it,group.rules,false)}
+        assertFalse(GameRules.eligible(card.copy(readingRevision=1,steps=emptyList()),group.rules,false))
+        val old=card.copy(readingRevision=1,steps=emptyList())
+        assertEquals(old,AppJson.decodeFromString<Mission>(AppJson.encodeToString(old)))
+    }
 }

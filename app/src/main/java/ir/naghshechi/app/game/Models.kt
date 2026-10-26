@@ -42,7 +42,8 @@ fun newId(): String = UUID.randomUUID().toString()
     val guess: String, val style: Style, val difficulty: Difficulty,
     val needs: Set<Need> = emptySet(), val places: Set<Place> = Place.entries.toSet(),
     val childSafe: Boolean = true, val source: String = "offline",
-    val twist: String = "", val contentRevision: Int = 1
+    val twist: String = "", val contentRevision: Int = 1,
+    val steps: List<String> = emptyList(), val example: String = "", val readingRevision: Int = 1
 )
 @Serializable enum class Phase { DEAL, ACTIVE, PICKS, REVEAL, RESULT }
 @Serializable enum class Outcome(val label: String) {
@@ -147,5 +148,6 @@ object GameRules {
 
 object MissionQuality {
     private val administrative=Regex("راهنمای.{0,12}بازی|قوانین.{0,12}بازی|قانون.{0,10}نقشه|ثبت.{0,8}امتیاز|مرتب.{0,12}(میز|وسایل)|چیدن.{0,12}وسایل|توضیح.{0,12}قواعد")
-    fun playable(m:Mission):Boolean=m.contentRevision>=2 && m.twist.length>=12 && !administrative.containsMatchIn(m.goal)
+    fun playable(m:Mission):Boolean=m.contentRevision>=2 && m.readingRevision>=2 && m.steps.isNotEmpty() &&
+        m.twist.length>=12 && !administrative.containsMatchIn(m.goal)
 }
