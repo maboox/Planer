@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ir.naghshechi.app.GameViewModel
 import ir.naghshechi.app.game.*
+import kotlinx.coroutines.launch
 
 @Composable fun NaghshechiApp(vm:GameViewModel) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -32,6 +33,7 @@ import ir.naghshechi.app.game.*
     var confirm by remember { mutableStateOf<String?>(null) }
     val context=LocalContext.current
     val scroll=rememberScrollState()
+    val uiScope=rememberCoroutineScope()
     LaunchedEffect(route,state.active?.phase,state.active?.dealIndex,state.active?.guessPickIndex,state.active?.revealIndex,state.active?.revealed){scroll.scrollTo(0)}
     GameTheme {
         BackHandler(route!="home") { if(!busy) route="home" }
@@ -84,7 +86,7 @@ import ir.naghshechi.app.game.*
                     }
                     "setup" -> SetupScreen(state.groups.firstOrNull { it.id==editId },busy,{vm.error.value=it},
                         onStart={full,selected -> vm.saveGroup(full) { vm.begin(full.copy(players=full.players.filter{it.id in selected}));route="session" }},
-                        onSave={vm.saveGroup(it){route="groups"}})
+                        onSave={vm.saveGroup(it){route="groups"}},onStepChanged={uiScope.launch{scroll.scrollTo(0)}})
                     "session" -> {
                         val s=state.active
                         if(s==null) {

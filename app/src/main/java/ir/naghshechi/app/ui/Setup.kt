@@ -1,26 +1,35 @@
 package ir.naghshechi.app.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ir.naghshechi.app.game.*
+import kotlinx.serialization.encodeToString
+
+private val PlayersSaver=Saver<List<Player>,String>(save={AppJson.encodeToString(it)},restore={AppJson.decodeFromString(it)})
+private val RulesSaver=Saver<Rules,String>(save={AppJson.encodeToString(it)},restore={AppJson.decodeFromString(it)})
+private val IdSetSaver=Saver<Set<String>,String>(save={AppJson.encodeToString(it)},restore={AppJson.decodeFromString(it)})
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable fun SetupScreen(existing:Group?,busy:Boolean,onError:(String)->Unit,
-    onStart:(Group,Set<String>)->Unit,onSave:(Group)->Unit) {
+    onStart:(Group,Set<String>)->Unit,onSave:(Group)->Unit,onStepChanged:()->Unit={}) {
     var step by rememberSaveable(existing?.id) { mutableIntStateOf(0) }
     var groupName by rememberSaveable(existing?.id) { mutableStateOf(existing?.name ?: "") }
-    val groupId=remember(existing?.id){existing?.id ?: newId()}
-    var players by remember(existing?.id){mutableStateOf(existing?.players ?: emptyList())}
-    var present by remember(existing?.id){mutableStateOf(existing?.players?.map{it.id}?.toSet() ?: emptySet())}
+    val groupId=rememberSaveable(existing?.id){existing?.id ?: newId()}
+    var players by rememberSaveable(existing?.id,stateSaver=PlayersSaver){mutableStateOf(existing?.players ?: emptyList())}
+    var present by rememberSaveable(existing?.id,stateSaver=IdSetSaver){mutableStateOf(existing?.players?.map{it.id}?.toSet() ?: emptySet())}
     var newName by rememberSaveable { mutableStateOf("") }
-    var rules by remember(existing?.id){mutableStateOf(existing?.rules ?: Rules())}
+    var rules by rememberSaveable(existing?.id,stateSaver=RulesSaver){mutableStateOf(existing?.rules ?: Rules())}
+    LaunchedEffect(step){onStepChanged()}
+    BackHandler(step>0){step--}
     val full=Group(groupId,groupName.trim(),players,rules)
 
     PageTitle("آماده‌سازی • ${(step+1).fa()} از ۳",when(step){0->"کیا پایه‌ان؟";1->"حال‌وهوای جمع";else->"سبک نقشه‌ها"})

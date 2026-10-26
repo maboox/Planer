@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import ir.naghshechi.app.game.*
 import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -22,7 +23,12 @@ class UiFlowTest {
     @get:Rule val ui=createAndroidComposeRule<MainActivity>()
     private val vm get()=ViewModelProvider(ui.activity)[GameViewModel::class.java]
     private fun waitReady(){ui.waitUntil(15_000){vm.ready.value}}
-    private fun click(text:String){ui.onNodeWithText(text).performScrollTo().performClick();ui.waitForIdle()}
+    private fun click(text:String){
+        ui.waitUntil(10_000){ui.onAllNodesWithText(text,useUnmergedTree=true).fetchSemanticsNodes().isNotEmpty()}
+        val node=ui.onNodeWithText(text,useUnmergedTree=true)
+        if(!node.isDisplayed())node.performScrollTo()
+        node.performTouchInput{click()};ui.waitForIdle()
+    }
     private fun unlock(){ui.onNodeWithText("نگه دار تا باز شود").performScrollTo().performTouchInput{longClick()}}
     private fun screenshot(name:String){
         ui.waitForIdle()
@@ -34,6 +40,11 @@ class UiFlowTest {
             File("build/reports/screenshots/$name.png").outputStream().use{image.compress(Bitmap.CompressFormat.PNG,100,it)}
             image.recycle()
         }
+    }
+    @Before fun resetLocalGame(){
+        waitReady()
+        ui.runOnIdle{vm.erase()}
+        ui.waitUntil(10_000){vm.state.value.active==null && vm.state.value.groups.isEmpty() && vm.state.value.history.isEmpty()}
     }
     @Test fun completeOfflineGameAndCaptureRealScreens(){
         waitReady();screenshot("home")
@@ -48,12 +59,20 @@ class UiFlowTest {
             ui.waitUntil(10_000){vm.state.value.active?.dealIndex==i}
             unlock()
             if(i==0){
+                val missionId=vm.state.value.active!!.assignments.first().mission.id
+                ui.activityRule.scenario.recreate()
+                waitReady()
+                assertEquals(missionId,vm.state.value.active!!.assignments.first().mission.id)
+                ui.onNodeWithText("مأموریت تو").assertDoesNotExist()
+                unlock()
                 ui.onNodeWithText("موفقیت یعنی").performScrollTo().assertIsDisplayed()
                 screenshot("mission")
             }
             click(if(i==3)"فهمیدم؛ عملیات شروع بشه!" else "فهمیدم؛ گوشی برای نفر بعد")
         }
         ui.waitUntil(10_000){vm.state.value.active?.phase==Phase.ACTIVE}
+        ui.onNodeWithText("زمان باقی‌مانده").assertIsDisplayed()
+        ui.waitForIdle()
         ui.mainClock.autoAdvance=false
         screenshot("timer")
         ui.mainClock.autoAdvance=true
@@ -67,8 +86,10 @@ class UiFlowTest {
             val s=vm.state.value.active!!
             val name=s.players.first{it.id==s.revealOrder[i]}.name
             click("پاکت $name رو باز کن")
+            ui.waitUntil(10_000){vm.state.value.active?.revealed==true}
             if(i==0)screenshot("reveal")
             click("✓ انجام شد")
+            ui.waitUntil(10_000){GameRules.canFinishReveal(vm.state.value.active!!)}
             click(if(i==3)"بریم سراغ نتیجهٔ نهایی" else "ثبت و افشای نفر بعد")
         }
         ui.waitUntil(10_000){vm.state.value.active?.phase==Phase.RESULT}

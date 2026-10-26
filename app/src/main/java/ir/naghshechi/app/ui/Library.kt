@@ -43,7 +43,7 @@ import java.util.Locale
     val people=sessions.flatMap{it.players}.distinctBy{it.id}
     val ranking=people.sortedWith(compareByDescending<Player>{p->sessions.count{p.id in GameRules.winners(it)}}
         .thenByDescending{p->sessions.count{it.outcomes[p.id]==Outcome.SUCCESS}})
-    Subhead("جدول ماندگار","بر پایهٔ تعداد برد")
+    Subhead("جدول سابقه","بر پایهٔ تعداد برد")
     ranking.forEach{p->
         val played=sessions.filter{session->session.players.any{it.id==p.id}}
         val wins=played.count{p.id in GameRules.winners(it)}
@@ -61,7 +61,7 @@ import java.util.Locale
             }
         }
     }
-    Note("برد مشترک برای همهٔ برنده‌ها ثبت می‌شود. تعداد حضور کنار بردهاست تا مقایسه معنی‌دار باشد. نشان‌ها امتیاز اضافه نمی‌دهند.")
+    Note("برد مشترک برای همهٔ برنده‌ها ثبت می‌شود. جدول از حداکثر ۳۰۰ بازی اخیرِ ذخیره‌شده ساخته می‌شود؛ برای آرشیو طولانی پشتیبان بگیر. نشان‌ها امتیاز اضافه نمی‌دهند.")
     Subhead("پرونده‌های قبلی")
     sessions.reversed().forEach{s->PanelCard{
         Text(s.groupName,style=MaterialTheme.typography.titleMedium)

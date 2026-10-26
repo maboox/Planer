@@ -34,6 +34,8 @@ val Muted=Color(0xFFBBC6D8)
 val Coral=Color(0xFFFFA797)
 val Face=FontFamily(Font(R.font.vazirmatn))
 private val colors=darkColorScheme(primary=Gold,onPrimary=Ink,secondary=Mint,onSecondary=Ink,
+    primaryContainer=Color(0xFF443B28),onPrimaryContainer=Gold,
+    secondaryContainer=Color(0xFF25483F),onSecondaryContainer=Mint,
     background=Ink,onBackground=Cream,surface=Panel,onSurface=Cream,surfaceVariant=Panel,onSurfaceVariant=Muted,
     outline=Line,error=Coral,onError=Ink)
 private fun type(size:Int,weight:FontWeight=FontWeight.Normal)=TextStyle(fontFamily=Face,fontSize=size.sp,fontWeight=weight,lineHeight=(size*1.65).sp)
