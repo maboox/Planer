@@ -17,7 +17,7 @@ The wrapper ZIP checksum is pinned. The wrapper JAR is checked by the Gradle set
 
 ## GitHub Actions
 
-`Android • build & verify` runs on main pushes, PRs and manual dispatch. It builds a preview APK, checks release compilation, runs JVM/Compose tests and Android lint, and uploads reports. A successful main push updates the prerelease `preview` download. PR jobs receive no signing secrets. The preview publisher is a separate job with repository-write permission.
+`Android • build & verify` runs on main code pushes, PRs and manual dispatch. Documentation-only pushes skip rebuilding; the existing verified preview stays available. It builds a preview APK, checks release compilation, runs JVM/Compose tests and Android lint, and uploads reports. A successful main push updates the prerelease `preview` download. PR jobs receive no signing secrets. The preview publisher is a separate job with repository-write permission.
 
 UI PNGs in `app/build/reports/screenshots` are rendered by the actual Compose UI under Robolectric native graphics. They are useful layout evidence, not a substitute for testing a real device. Store curated copies in `docs/screenshots` after visual inspection.
 

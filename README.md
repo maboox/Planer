@@ -5,19 +5,19 @@
 <br />
 
 [![Android build](https://github.com/maboox/Planer/actions/workflows/android.yml/badge.svg)](https://github.com/maboox/Planer/actions/workflows/android.yml)
-![Android](https://img.shields.io/badge/Android-8%2B-88e2c8?style=flat-square&logo=android&logoColor=101a30)
-![Language](https://img.shields.io/badge/فارسی-RTL-ffcd61?style=flat-square)
-![Offline](https://img.shields.io/badge/بازی-آفلاین-88e2c8?style=flat-square)
-![AI](https://img.shields.io/badge/AI-اختیاری-ffcd61?style=flat-square)
+![Android](https://img.shields.io/badge/Android-8%2B-90a5ff?style=flat-square&logo=android&logoColor=090e17)
+![Language](https://img.shields.io/badge/فارسی-RTL-caef60?style=flat-square)
+![Offline](https://img.shields.io/badge/بازی-آفلاین-90a5ff?style=flat-square)
+![AI](https://img.shields.io/badge/AI-اختیاری-caef60?style=flat-square)
 
 ### طبیعی باش. مشکوک بازی کن.
 
 یک گوشی، یک جمع و هدف‌هایی که کسی نباید بفهمد. خودِ مهمانی، زمین بازی است.
 
 <p>
-<a href="https://github.com/maboox/Planer/releases/download/preview/naghshechi-preview.apk"><img alt="دریافت نسخه آزمایشی" src="https://img.shields.io/badge/دریافت_APK-نسخهٔ_آزمایشی-ffcd61?style=for-the-badge&logo=android&logoColor=101a30" /></a>
-<a href="docs/GAME_RULES.fa.md"><img alt="راهنمای بازی" src="https://img.shields.io/badge/قواعد-راهنمای_بازی-1c2a43?style=for-the-badge" /></a>
-<a href="https://github.com/maboox/Planer/issues/new/choose"><img alt="گزارش مشکل" src="https://img.shields.io/badge/همکاری-گزارش_مشکل-1c2a43?style=for-the-badge" /></a>
+<a href="https://github.com/maboox/Planer/releases/download/preview/naghshechi-preview.apk"><img alt="دریافت نسخه آزمایشی" src="https://img.shields.io/badge/دریافت_APK-نسخهٔ_آزمایشی-caef60?style=for-the-badge&logo=android&logoColor=090e17" /></a>
+<a href="docs/GAME_RULES.fa.md"><img alt="راهنمای بازی" src="https://img.shields.io/badge/قواعد-راهنمای_بازی-141d2b?style=for-the-badge" /></a>
+<a href="https://github.com/maboox/Planer/issues/new/choose"><img alt="گزارش مشکل" src="https://img.shields.io/badge/همکاری-گزارش_مشکل-141d2b?style=for-the-badge" /></a>
 </p>
 
 **نسخهٔ اولیهٔ قابل‌آزمایش؛ آمادهٔ انتشار عمومی بازار محسوب نمی‌شود.**
@@ -67,7 +67,7 @@
 
 در سطح سخت، ایده ممکن است از واسطه عبور کند یا بعد از تغییر موضوع برگردد. سختی صرفاً با زیادکردن تعداد افراد ساخته نشده است. [معیار طراحی محتوا](docs/CONTENT_DESIGN.fa.md)
 <p align="center">
-  <img src="docs/screenshots/timer.png" width="240" alt="زمان عملیات" />
+  <img src="docs/screenshots/untimed.png" width="240" alt="عملیات بدون زمان" />
   <img src="docs/screenshots/reveal.png" width="240" alt="افشای مأموریت" />
   <img src="docs/screenshots/results.png" width="240" alt="نتیجه و جدول" />
 </p>
@@ -86,7 +86,7 @@
 
 پیش‌نیازها: JDK 17، Android SDK 36 و دسترسی به Google Maven و Maven Central. Gradle Wrapper با checksum در مخزن است.
 
-با هر پوش روی `main`، GitHub Actions تست، بررسی اندروید و ساخت را اجرا می‌کند. پس از موفقیت، APK در بخش **Actions → naghshechi-preview** و صفحهٔ **Releases → preview** قرار می‌گیرد. بستهٔ آزمایشی شناسهٔ جدا و امضای توسعه دارد؛ تغییر امضای ساخت‌های آزمایشی ممکن است نیاز به حذف و نصب مجدد داشته باشد. پیش از آن پشتیبان بگیر.
+با هر تغییر کد روی `main`، GitHub Actions تست، بررسی اندروید و ساخت را اجرا می‌کند. پس از موفقیت، APK در بخش **Actions → naghshechi-preview** و صفحهٔ **Releases → preview** قرار می‌گیرد. بستهٔ آزمایشی شناسهٔ جدا و امضای توسعه دارد؛ تغییر امضای ساخت‌های آزمایشی ممکن است نیاز به حذف و نصب مجدد داشته باشد. پیش از آن پشتیبان بگیر.
 
 نسخهٔ انتشار با تگ `v*` فقط پس از تنظیم کلید امضای خصوصی ساخته می‌شود. [راهنمای انتشار](docs/BUILDING.md)
 

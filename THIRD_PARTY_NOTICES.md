@@ -14,4 +14,4 @@ The application uses maintained libraries and a licensed icon set rather than re
 
 Copies of Apache-2.0 and the font's original OFL notice are in `licenses/` and included in app assets. `runtimeInventory` outputs resolved runtime coordinates for auditing. This table lists direct components; review the generated inventory before a store release, including transitive components and their embedded notices.
 
-Banner and launcher envelope artwork are original project vectors. App screenshots are generated from the app; they contain fictional sample participants. Remote README badges are served by Shields.io and are not used by the Android app.
+Banner and launcher spy-mask artwork are original project vectors. App screenshots are generated from the app; they contain fictional sample participants. Remote README badges are served by Shields.io and are not used by the Android app.

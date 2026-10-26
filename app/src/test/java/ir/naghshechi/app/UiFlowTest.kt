@@ -43,7 +43,7 @@ class UiFlowTest {
     }
     private fun launcherIcon(){
         ui.runOnIdle{
-            val icon=ui.activity.packageManager.getApplicationIcon(ui.activity.applicationInfo)
+            val icon=requireNotNull(ui.activity.getDrawable(R.mipmap.ic_launcher))
             val bitmap=Bitmap.createBitmap(384,384,Bitmap.Config.ARGB_8888)
             icon.setBounds(0,0,384,384);icon.draw(Canvas(bitmap))
             File("build/reports/screenshots").mkdirs()
