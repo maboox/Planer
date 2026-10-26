@@ -1,0 +1,18 @@
+name: گزارش مشکل
+description: کمک کن نقشه‌چی بهتر شود
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: چه اتفاقی افتاد؟
+      description: مراحل تکرار مشکل را بنویس؛ اسم واقعی بازیکن‌ها یا کلید API را نفرست.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: گوشی، نسخهٔ اندروید و نسخهٔ برنامه
+  - type: textarea
+    id: expected
+    attributes:
+      label: انتظار داشتی چه اتفاقی بیفتد؟

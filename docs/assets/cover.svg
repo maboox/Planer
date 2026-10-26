@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="500" viewBox="0 0 1280 500">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a30"/><stop offset="1" stop-color="#243852"/></linearGradient><pattern id="p" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#88e2c8" opacity=".13"/></pattern></defs>
+<rect width="1280" height="500" rx="28" fill="url(#bg)"/><rect width="1280" height="500" rx="28" fill="url(#p)"/>
+<circle cx="280" cy="250" r="168" fill="#88e2c8" opacity=".06"/><circle cx="280" cy="250" r="125" fill="none" stroke="#88e2c8" stroke-dasharray="5 12" opacity=".35"/>
+<g transform="translate(142 175) rotate(-10 125 80)"><rect width="250" height="160" rx="25" fill="#88e2c8"/></g>
+<g transform="translate(155 170) rotate(9 125 80)"><rect width="250" height="160" rx="25" fill="#ffcd61"/><path d="M8 16l117 91L242 16" fill="none" stroke="#101a30" stroke-width="12" stroke-linejoin="round"/><circle cx="126" cy="106" r="25" fill="#101a30"/><path d="M116 105l8 8 15-16" fill="none" stroke="#ffcd61" stroke-width="5"/></g>
+<g fill="#ffcd61"><path d="M415 110l6 16 17 6-17 6-6 17-6-17-16-6 16-6z"/><circle cx="122" cy="355" r="7"/></g>
+<text x="1170" y="124" text-anchor="end" fill="#88e2c8" font-family="Arial,sans-serif" font-size="17" letter-spacing="5">ONE PHONE. MANY SECRET PLANS.</text>
+<text x="1170" y="244" text-anchor="end" fill="#fff7e8" font-family="Vazirmatn,Tahoma,Arial,sans-serif" font-size="91" font-weight="bold">نقشه‌چی</text>
+<text x="1170" y="305" text-anchor="end" fill="#c5cfe0" font-family="Vazirmatn,Tahoma,Arial,sans-serif" font-size="30">همه یه نقشه‌ای دارن!</text>
+<rect x="742" y="355" width="428" height="53" rx="26" fill="#fff7e8" opacity=".07"/>
+<text x="956" y="389" text-anchor="middle" fill="#ffcd61" font-family="Arial,sans-serif" font-size="18" letter-spacing="2">ANDROID · PERSIAN · OFFLINE FIRST</text>
+</svg>

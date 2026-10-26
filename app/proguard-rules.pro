@@ -1,0 +1,2 @@
+-keepattributes Signature,InnerClasses,EnclosingMethod
+-keep class ir.naghshechi.app.data.AppDatabase_Impl { *; }
