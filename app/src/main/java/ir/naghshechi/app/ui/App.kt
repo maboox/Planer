@@ -40,25 +40,30 @@ import kotlinx.coroutines.launch
         Scaffold(containerColor=Ink,topBar={
             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal=20.dp,vertical=8.dp),verticalAlignment=Alignment.CenterVertically) {
                 if(route!="home")IconButton({route="home"},enabled=!busy) { Icon(Icons.AutoMirrored.Rounded.ArrowBack,"خانه") }
-                else SmallIcon(Icons.Rounded.MarkEmailUnread,Gold)
+                else SpyMark(Modifier.size(42.dp))
                 Spacer(Modifier.width(10.dp))
                 Column(Modifier.weight(1f)) {
                     Text("نقشه‌چی",style=MaterialTheme.typography.titleLarge)
-                    Text("همه یه نقشه‌ای دارن!",color=Muted,style=MaterialTheme.typography.bodySmall)
+                    Text("بازیِ نیت‌های پنهان",color=Muted,style=MaterialTheme.typography.bodySmall)
                 }
                 IconButton({route="help"},enabled=!busy) { Icon(Icons.AutoMirrored.Rounded.HelpOutline,"راهنمای بازی",tint=Muted) }
             }
         },bottomBar={
-            if(route in listOf("home","groups","history","settings")) NavigationBar(containerColor=Ink,tonalElevation=0.dp) {
+            if(route in listOf("home","groups","history","settings")) Row(Modifier.fillMaxWidth().background(Ink)
+                .navigationBarsPadding().padding(horizontal=18.dp,vertical=10.dp),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
                 listOf(Triple("home","خانه",Icons.Rounded.Home),Triple("groups","جمع‌ها",Icons.Rounded.Groups),
                     Triple("history","افتخارات",Icons.Rounded.EmojiEvents),Triple("settings","تنظیمات",Icons.Rounded.Tune)).forEach { (key,label,icon) ->
-                    NavigationBarItem(selected=route==key,onClick={route=key},icon={Icon(icon,null)},label={Text(label)},
-                        colors=NavigationBarItemDefaults.colors(selectedIconColor=Gold,selectedTextColor=Gold,indicatorColor=Panel,unselectedIconColor=Muted,unselectedTextColor=Muted))
+                    Surface(onClick={route=key},color=if(route==key)Panel else Ink,shape=RoundedCornerShape(14.dp),modifier=Modifier.weight(1f)) {
+                        Column(Modifier.padding(vertical=10.dp),horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(5.dp)) {
+                            Icon(icon,null,tint=if(route==key)Gold else Muted,modifier=Modifier.size(21.dp))
+                            Text(label,color=if(route==key)Gold else Muted,style=MaterialTheme.typography.labelMedium)
+                        }
+                    }
                 }
             }
         }) { padding ->
             Column(Modifier.fillMaxSize().padding(padding).imePadding().verticalScroll(scroll)
-                .padding(horizontal=22.dp).padding(top=12.dp,bottom=28.dp),verticalArrangement=Arrangement.spacedBy(18.dp)) {
+                .padding(horizontal=20.dp).padding(top=10.dp,bottom=24.dp),verticalArrangement=Arrangement.spacedBy(15.dp)) {
                 if(!ready) {
                     PageTitle("خوش اومدی","داریم آماده می‌شیم…")
                     CircularProgressIndicator(color=Gold)
@@ -145,10 +150,15 @@ import kotlinx.coroutines.launch
 }
 
 @Composable private fun Home(state:AppState,onNew:()->Unit,onContinue:()->Unit,onGroups:()->Unit) {
-    Tag("بازی جمعی • یک گوشی",Mint)
-    Text("یه جمع،\nچند نقشهٔ مخفی.",style=MaterialTheme.typography.displayLarge)
-    Text("مأموریتت رو بگیر، طبیعی رفتار کن؛\nآخرش معلوم می‌شه کی چه نقشه‌ای داشته.",color=Muted,style=MaterialTheme.typography.bodyLarge)
-    EnvelopeArt()
+    Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically){
+        Tag("عملیاتِ اجتماعی",Gold);Spacer(Modifier.weight(1f));Text("۴–۱۲ نفر",color=Muted,style=MaterialTheme.typography.labelMedium)
+    }
+    Column {
+        Text("طبیعی باش.",style=MaterialTheme.typography.displayLarge)
+        Text("مشکوک بازی کن.",style=MaterialTheme.typography.displayLarge,color=Gold)
+    }
+    Text("پشتِ یک حرف عادی، یک نقشه پنهانه.\nمی‌تونی اجراش کنی، بدون اینکه لو بری؟",color=Muted,style=MaterialTheme.typography.bodyLarge)
+    SpyArt()
     if(state.active!=null) {
         PanelCard {
             Tag("پروندهٔ باز",Gold)
@@ -156,18 +166,17 @@ import kotlinx.coroutines.launch
             Text("بازی قبلی همین‌جا منتظرته.",color=Muted)
             Primary("ادامهٔ بازی",Icons.Rounded.PlayArrow,onClick=onContinue)
         }
-    } else Primary("نقشه‌ها رو بچین!",Icons.Rounded.AutoAwesome,onClick=if(state.groups.isEmpty())onNew else onGroups)
-    Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(12.dp)) {
-        Stat("${state.groups.size.fa()}","جمع ذخیره‌شده",Modifier.weight(1f))
-        Stat("${state.history.size.fa()}","بازی خاطره‌انگیز",Modifier.weight(1f))
-    }
-    PanelCard(light=true) {
-        Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {
-            Icon(Icons.Rounded.VisibilityOff,null,tint=Ink)
-            Text("شک کن؛ تا آخر دور لو نده!",style=MaterialTheme.typography.titleMedium)
+    } else Primary("نقشه‌ها رو بچین!",Icons.Rounded.PlayArrow,onClick=if(state.groups.isEmpty())onNew else onGroups)
+    Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+        listOf("۱" to "جمع رو بساز","۲" to "نقشه‌ات رو بگیر","۳" to "آخرش رو کن").forEach{(n,label)->
+            Column(Modifier.weight(1f).background(Panel,RoundedCornerShape(12.dp)).padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
+                Text(n,color=Gold,style=MaterialTheme.typography.titleLarge)
+                Text(label,color=Muted,style=MaterialTheme.typography.bodySmall)
+            }
         }
-        Text("هیچ‌کس مجبور به همراهی نیست. نقشه‌ات را با زیرکی جلو ببر، نه با اصرار.",style=MaterialTheme.typography.bodyMedium)
     }
+    Note("گوشی فقط آغاز و پایان ماجراست. خودِ مهمونی، زمین بازیه. می‌تونید بدون محدودیت زمان بازی کنید.",Icons.Rounded.VisibilityOff,Gold)
+    if(state.groups.isNotEmpty())Subhead("${state.groups.size.fa()} جمع آماده","${state.history.size.fa()} پروندهٔ بسته")
 }
 @Composable fun Stat(value:String,label:String,modifier:Modifier=Modifier) {
     Column(modifier.background(Panel,RoundedCornerShape(20.dp)).padding(16.dp),verticalArrangement=Arrangement.spacedBy(4.dp)) {

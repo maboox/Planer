@@ -75,15 +75,17 @@ private val IdSetSaver=Saver<Set<String>,String>(save={AppJson.encodeToString(it
             }){rules=rules.copy(setting=type)} }
             Subhead("سختی مأموریت‌ها")
             Difficulty.entries.forEach { level->Choice(level.label,rules.difficulty==level,when(level){
-                Difficulty.EASY->"هدف کوتاه، افراد کمتر و اجرای راحت‌تر"
-                Difficulty.MEDIUM->"هماهنگی بیشتر و کمی نقشه‌کشیدن"
-                Difficulty.HARD->"چند مرحله در فرصت‌های جدا؛ بدون عبور از مرزها"
+                Difficulty.EASY->"یک واکنش غیرمستقیم؛ با زمینه‌سازی کوتاه"
+                Difficulty.MEDIUM->"واکنش اول باید اتفاق دوم را راه بیندازد"
+                Difficulty.HARD->"ردت را پنهان کن؛ نقشه باید بدون هدایت تو ادامه پیدا کند"
             }){rules=rules.copy(difficulty=level)} }
             Note("همهٔ مأموریت‌های این جلسه هم‌سطح و ۴ امتیازی‌اند. سخت‌تر یعنی برنامه‌ریزی بیشتر، نه کار خطرناک یا خجالت‌آور.")
-            Subhead("چقدر وقت دارید؟")
+            Subhead("ریتم عملیات")
+            Choice("بدون محدودیت زمان",rules.minutes==0,"گوشی کنار می‌رود؛ هر وقت جمع آماده بود، پایان می‌دهید."){rules=rules.copy(minutes=0)}
             FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 listOf(15,25,40,60).forEach{minutes->FilterChip(rules.minutes==minutes,{rules=rules.copy(minutes=minutes)},label={Text("${minutes.fa()} دقیقه")})}
             }
+            Text("زمان‌دار هم می‌توانی بازی کنی؛ انتخابش اختیاری است.",color=Muted,style=MaterialTheme.typography.bodySmall)
             Subhead("کجا هستید؟")
             FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 Place.entries.forEach{place->FilterChip(rules.place==place,{rules=rules.copy(place=place)},label={Text(place.label)})}

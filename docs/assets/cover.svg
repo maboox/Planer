@@ -1,13 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="500" viewBox="0 0 1280 500">
-<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101a30"/><stop offset="1" stop-color="#243852"/></linearGradient><pattern id="p" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#88e2c8" opacity=".13"/></pattern></defs>
-<rect width="1280" height="500" rx="28" fill="url(#bg)"/><rect width="1280" height="500" rx="28" fill="url(#p)"/>
-<circle cx="280" cy="250" r="168" fill="#88e2c8" opacity=".06"/><circle cx="280" cy="250" r="125" fill="none" stroke="#88e2c8" stroke-dasharray="5 12" opacity=".35"/>
-<g transform="translate(142 175) rotate(-10 125 80)"><rect width="250" height="160" rx="25" fill="#88e2c8"/></g>
-<g transform="translate(155 170) rotate(9 125 80)"><rect width="250" height="160" rx="25" fill="#ffcd61"/><path d="M8 16l117 91L242 16" fill="none" stroke="#101a30" stroke-width="12" stroke-linejoin="round"/><circle cx="126" cy="106" r="25" fill="#101a30"/><path d="M116 105l8 8 15-16" fill="none" stroke="#ffcd61" stroke-width="5"/></g>
-<g fill="#ffcd61"><path d="M415 110l6 16 17 6-17 6-6 17-6-17-16-6 16-6z"/><circle cx="122" cy="355" r="7"/></g>
-<text x="1170" y="124" text-anchor="end" fill="#88e2c8" font-family="Arial,sans-serif" font-size="17" letter-spacing="5">ONE PHONE. MANY SECRET PLANS.</text>
-<text x="1170" y="244" text-anchor="end" fill="#fff7e8" font-family="Vazirmatn,Tahoma,Arial,sans-serif" font-size="91" font-weight="bold">نقشه‌چی</text>
-<text x="1170" y="305" text-anchor="end" fill="#c5cfe0" font-family="Vazirmatn,Tahoma,Arial,sans-serif" font-size="30">همه یه نقشه‌ای دارن!</text>
-<rect x="742" y="355" width="428" height="53" rx="26" fill="#fff7e8" opacity=".07"/>
-<text x="956" y="389" text-anchor="middle" fill="#ffcd61" font-family="Arial,sans-serif" font-size="18" letter-spacing="2">ANDROID · PERSIAN · OFFLINE FIRST</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="520" viewBox="0 0 1280 520">
+<defs><radialGradient id="glow"><stop stop-color="#27351c"/><stop offset="1" stop-color="#090e17"/></radialGradient><pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" stroke="#233145" fill="none" opacity=".35"/></pattern></defs>
+<rect width="1280" height="520" rx="24" fill="#090e17"/><rect width="1280" height="520" rx="24" fill="url(#grid)"/>
+<circle cx="296" cy="260" r="224" fill="url(#glow)"/><g fill="none" stroke="#50683d" opacity=".65"><circle cx="296" cy="260" r="192" stroke-dasharray="3 12"/><circle cx="296" cy="260" r="150"/><path d="M72 260H520M296 36V484" stroke="#2b384b"/></g>
+<g transform="translate(161 125) scale(2.5)">
+<path fill="#19251d" stroke="#465c32" stroke-width="1.2" d="M54 19L83 37L79 77L54 91L29 77L25 37Z"/>
+<path fill="#caef60" d="M23 43L39 37L54 42L69 37L85 43L79 65L67 71L54 63L41 71L29 65Z"/>
+<path fill="#090e17" d="M34 48L47 52L43 59L35 55ZM74 48L61 52L65 59L73 55Z"/>
+<path fill="none" stroke="#90a5ff" stroke-width="1.5" d="M20 30V24H27M81 24H88V30M20 78V84H27M81 84H88V78"/>
+</g>
+<g fill="#caef60"><circle cx="122" cy="180" r="6"/><circle cx="456" cy="355" r="6"/></g>
+<rect x="76" y="421" width="220" height="39" rx="6" fill="#141d2b" stroke="#2b384b"/><text x="186" y="447" text-anchor="middle" fill="#90a5ff" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">IDENTITY: UNKNOWN</text>
+<text x="1190" y="91" text-anchor="end" fill="#caef60" font-family="Tahoma,Arial,sans-serif" font-size="37" font-weight="bold">نقشه‌چی</text>
+<text x="1190" y="154" text-anchor="end" fill="#90a5ff" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">SOCIAL STEALTH / VOL. 02</text>
+<text x="1190" y="253" text-anchor="end" fill="#f1f4f8" font-family="Vazirmatn,Tahoma,Arial,sans-serif" font-size="65" font-weight="bold">طبیعی باش.</text>
+<text x="1190" y="342" text-anchor="end" fill="#caef60" font-family="Vazirmatn,Tahoma,Arial,sans-serif" font-size="65" font-weight="bold">مشکوک بازی کن.</text>
+<text x="1190" y="419" text-anchor="end" fill="#a6b3c7" font-family="Tahoma,Arial,sans-serif" font-size="23">یک گوشی. یک جمع. نیت‌های پنهان.</text>
+<path d="M1230 45V25H1210M50 45V25H70M1230 475V495H1210M50 475V495H70" fill="none" stroke="#caef60" stroke-width="2"/>
 </svg>

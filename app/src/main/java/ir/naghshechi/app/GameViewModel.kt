@@ -30,7 +30,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             catalogue = withContext(Dispatchers.IO) { storage.catalogue() }
             prefs.value = storage.preferences()
             hasKey.value = withContext(Dispatchers.IO) { secrets.read().isNotBlank() }
-            mutable.value = storage.load()
+            val loaded=storage.load()
+            // Existing sessions/history retain the exact cards they were dealt.
+            mutable.value = loaded.copy(generated=loaded.generated.filter{it.contentRevision>=2})
             ready.value = true
         } catch (_: Exception) { error.value = "اطلاعات خوانده نشد. برای محافظت از سابقه، چیزی جایگزین نشد. اپ را دوباره باز کن." }
     } }
@@ -92,7 +94,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun acknowledge() = session { s ->
         require(s.phase == Phase.DEAL)
         if (s.dealIndex < s.players.lastIndex) s.copy(dealIndex=s.dealIndex+1)
-        else s.copy(phase=Phase.ACTIVE,running=true,anchorElapsed=SystemClock.elapsedRealtime(),anchorWall=System.currentTimeMillis(),bootId=boot())
+        else s.copy(phase=Phase.ACTIVE,running=s.rules.minutes>0,anchorElapsed=SystemClock.elapsedRealtime(),anchorWall=System.currentTimeMillis(),bootId=boot())
     }
     fun swap() = session { s ->
         require(s.phase == Phase.DEAL)
@@ -106,6 +108,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun pauseOrResume() = session { s ->
         require(s.phase == Phase.ACTIVE)
+        require(s.rules.minutes>0){"این عملیات بدون محدودیت زمان است."}
         val (remaining, _) = currentTime(s)
         s.copy(remainingMs=remaining,running=!s.running,anchorElapsed=SystemClock.elapsedRealtime(),anchorWall=System.currentTimeMillis(),bootId=boot())
     }

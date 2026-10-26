@@ -24,10 +24,14 @@ class RulesTest {
         }
     }
     @Test fun catalogueHasCompleteCardsAndStableSemanticFamilies(){
-        assertEquals(60,pool.map{it.family}.distinct().size)
-        assertEquals(180,pool.size)
+        assertEquals(42,pool.map{it.family}.distinct().size)
+        assertEquals(126,pool.size)
         assertEquals(pool.size,pool.map{it.id}.distinct().size)
-        pool.groupBy{it.family}.values.forEach{assertEquals(Difficulty.entries.toSet(),it.map{m->m.difficulty}.toSet())}
+        pool.groupBy{it.family}.values.forEach{
+            assertEquals(Difficulty.entries.toSet(),it.map{m->m.difficulty}.toSet())
+            assertEquals("Each tier needs a different obstacle, not a number substitution",3,it.map{m->m.twist}.distinct().size)
+        }
+        assertTrue(pool.all{MissionQuality.playable(it)})
         pool.forEach{m->assertTrue(listOf(m.goal,m.success,m.allowed,m.invalid,m.boundary,m.guess).all{it.length>=10 && "{n}" !in it})}
     }
     @Test fun hardLimitsAreNotRelaxedWhenContentRunsOut(){
@@ -80,7 +84,7 @@ class RulesTest {
         assertEquals(players.size,GameRules.winners(s).size)
     }
     @Test fun processRestartUsesElapsedTimeButRebootPauses(){
-        val s=session().copy(running=true,remainingMs=60_000,anchorElapsed=1000,anchorWall=100_000,bootId=4)
+        val s=session().copy(rules=Rules(minutes=25),running=true,remainingMs=60_000,anchorElapsed=1000,anchorWall=100_000,bootId=4)
         assertEquals(50_000L,GameRules.remaining(s,11_000,110_000,4).first)
         assertTrue(GameRules.remaining(s,500,110_000,5).second)
         assertTrue(GameRules.remaining(s,11_000,999_000,4).second)
@@ -106,5 +110,22 @@ class RulesTest {
     @Test fun aiResponseCannotGrantItselfPermission(){
         val cards=pool.filter{it.difficulty==Difficulty.MEDIUM}.take(10).map{it.copy(needs=setOf(Need.CONTACT))}
         assertThrows(IllegalArgumentException::class.java){AvalAi.validate(cards,group,group.players.map{it.name})}
+    }
+    @Test fun untimedGameNeverExpiresEvenWithStaleTimerFields(){
+        val s=session().copy(rules=Rules(minutes=0),running=true,remainingMs=0,anchorElapsed=1,bootId=2)
+        assertEquals(0L to false,GameRules.remaining(s,9_999_999,99_999_999,3))
+        GameRules.validateGroup(group.copy(rules=Rules(minutes=0)))
+        assertThrows(IllegalArgumentException::class.java){GameRules.validateGroup(group.copy(rules=Rules(minutes=-1)))}
+    }
+    @Test fun obsoleteAndAdministrativeCardsCannotEnterANewGame(){
+        val card=pool.first{GameRules.eligible(it,group.rules,false)}
+        assertFalse(GameRules.eligible(card.copy(contentRevision=1),group.rules,false))
+        assertFalse(MissionQuality.playable(card.copy(goal="راهنمای بازی را برای بقیه توضیح بده")))
+        assertFalse(MissionQuality.playable(card.copy(goal="وسایل را مرتب روی میز بگذار و مرتب‌کردن میز را انجام بده")))
+    }
+    @Test fun photoCardsRequireExplicitPermission(){
+        val photo=pool.first{it.family=="v2-group-photo" && it.difficulty==Difficulty.MEDIUM}
+        assertFalse(GameRules.eligible(photo,group.rules,false))
+        assertTrue(GameRules.eligible(photo,group.rules.copy(allowed=setOf(Need.PHOTO)),false))
     }
 }

@@ -41,18 +41,28 @@ class UiFlowTest {
             image.recycle()
         }
     }
+    private fun launcherIcon(){
+        ui.runOnIdle{
+            val icon=ui.activity.packageManager.getApplicationIcon(ui.activity.applicationInfo)
+            val bitmap=Bitmap.createBitmap(384,384,Bitmap.Config.ARGB_8888)
+            icon.setBounds(0,0,384,384);icon.draw(Canvas(bitmap))
+            File("build/reports/screenshots").mkdirs()
+            File("build/reports/screenshots/app-icon.png").outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}
+            bitmap.recycle()
+        }
+    }
     @Before fun resetLocalGame(){
         waitReady()
         ui.runOnIdle{vm.erase()}
         ui.waitUntil(10_000){vm.state.value.active==null && vm.state.value.groups.isEmpty() && vm.state.value.history.isEmpty()}
     }
     @Test fun completeOfflineGameAndCaptureRealScreens(){
-        waitReady();screenshot("home")
+        waitReady();screenshot("home");launcherIcon()
         val group=Group(name="رفقای پنجشنبه",players=listOf("علی","رضا","مریم","سارا").map{Player(name=it)})
         ui.runOnIdle{vm.saveGroup(group){}}
         ui.waitUntil(10_000){vm.state.value.groups.isNotEmpty()}
         click("نقشه‌ها رو بچین!");click("انتخاب و تنظیم بازی")
-        click("مرحلهٔ بعد");screenshot("difficulty")
+        click("مرحلهٔ بعد");click("۲۵ دقیقه");screenshot("difficulty")
         click("مرحلهٔ بعد");click("نقشه‌ها رو بچین!")
         ui.waitUntil(10_000){vm.state.value.active!=null}
         repeat(4){i->
@@ -85,7 +95,7 @@ class UiFlowTest {
             ui.waitUntil(10_000){vm.state.value.active?.phase==Phase.REVEAL && vm.state.value.active?.revealIndex==i}
             val s=vm.state.value.active!!
             val name=s.players.first{it.id==s.revealOrder[i]}.name
-            click("پاکت $name رو باز کن")
+            click("نقشهٔ $name رو افشا کن")
             ui.waitUntil(10_000){vm.state.value.active?.revealed==true}
             if(i==0)screenshot("reveal")
             click("✓ انجام شد")
@@ -106,5 +116,22 @@ class UiFlowTest {
         click("نقشه‌ها رو بچین!")
         ui.onNodeWithText("مرحلهٔ بعد").performScrollTo().assertIsDisplayed()
         screenshot("compact")
+    }
+    @Test fun untimedOperationWaitsForTheGroup(){
+        val group=Group(name="شبِ بی‌عجله",players=listOf("علی","رضا","مریم","سارا").map{Player(name=it)})
+        ui.runOnIdle{vm.begin(group)}
+        ui.waitUntil(10_000){vm.state.value.active!=null}
+        repeat(4){i->
+            ui.runOnIdle{vm.acknowledge()}
+            ui.waitUntil(10_000){vm.state.value.active?.let{if(i==3)it.phase==Phase.ACTIVE else it.dealIndex==i+1}==true}
+        }
+        click("ادامهٔ بازی")
+        ui.onNodeWithText("بدون شمارش معکوس").assertIsDisplayed()
+        ui.onNodeWithText("زمان باقی‌مانده").assertDoesNotExist()
+        screenshot("untimed")
+        ui.mainClock.advanceTimeBy(120_000)
+        assertEquals(Phase.ACTIVE,vm.state.value.active!!.phase)
+        click("پایان دور و شروع حدس‌ها");click("پایان دور")
+        ui.waitUntil(10_000){vm.state.value.active?.phase==Phase.PICKS}
     }
 }

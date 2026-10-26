@@ -10,12 +10,12 @@ fun newId(): String = UUID.randomUUID().toString()
 
 @Serializable enum class Difficulty(val label: String) { EASY("ساده"), MEDIUM("متوسط"), HARD("سخت") }
 @Serializable enum class Style(val label: String, val hint: String) {
-    TALK("سر زبون‌ها", "گفت‌وگو و بازی با کلمات"),
-    ACTION("نقشهٔ عملی", "یک اتفاق کوچک و واقعی"),
-    COOPERATE("همدست", "همکاری و همراه‌کردن جمع"),
-    CREATE("خلاقانه", "ساختن و ایده‌پردازی"),
-    NEGOTIATE("مذاکره", "رسیدن به یک انتخاب مشترک"),
-    PERFORM("روی صحنه", "اجرا، تقلید و نمایش کوتاه")
+    TALK("مهندسی گفتگو", "بحث را بچرخان؛ ردِ خودت را جا نگذار"),
+    ACTION("حرکت حساب‌شده", "یک اتفاق واقعی با یک بهانهٔ طبیعی"),
+    COOPERATE("همدست ناخواسته", "دیگری وارد نقشه شود، بدون اینکه بداند"),
+    CREATE("جرقهٔ خلاق", "ایده‌ای بکار که بقیه ادامه‌اش بدهند"),
+    NEGOTIATE("نفوذ نرم", "نظر و تصمیم جمع را غیرمستقیم تغییر بده"),
+    PERFORM("نقش‌آفرینی", "کمی عجیب رفتار کن؛ زیادی تابلو نشو")
 }
 @Serializable enum class Setting(val label: String) { FAMILY("خانوادگی"), FRIENDS("دوستانه"), WORK("کاری") }
 @Serializable enum class Place(val label: String) { HOME("خانه"), CAFE("کافه"), WORK("محل کار"), OUTSIDE("فضای باز") }
@@ -28,7 +28,7 @@ fun newId(): String = UUID.randomUUID().toString()
     val setting: Setting = Setting.FAMILY,
     val place: Place = Place.HOME,
     val difficulty: Difficulty = Difficulty.MEDIUM,
-    val minutes: Int = 25,
+    val minutes: Int = 0,
     val styles: Set<Style> = Style.entries.filter { it != Style.PERFORM }.toSet(),
     val allowed: Set<Need> = emptySet(),
     val reward: String = "انتخاب بازی یا موسیقی بعدی",
@@ -41,7 +41,8 @@ fun newId(): String = UUID.randomUUID().toString()
     val success: String, val allowed: String, val invalid: String, val boundary: String,
     val guess: String, val style: Style, val difficulty: Difficulty,
     val needs: Set<Need> = emptySet(), val places: Set<Place> = Place.entries.toSet(),
-    val childSafe: Boolean = true, val source: String = "offline"
+    val childSafe: Boolean = true, val source: String = "offline",
+    val twist: String = "", val contentRevision: Int = 1
 )
 @Serializable enum class Phase { DEAL, ACTIVE, PICKS, REVEAL, RESULT }
 @Serializable enum class Outcome(val label: String) {
@@ -84,12 +85,12 @@ object GameRules {
         require(group.players.map { normalizedName(it.name) }.distinct().size == group.players.size) { "اسم بازیکن‌ها باید قابل‌تشخیص و متفاوت باشند." }
         require(group.players.map { it.id }.distinct().size == group.players.size) { "شناسهٔ تکراری بازیکن." }
         require(group.rules.styles.isNotEmpty()) { "حداقل یک سبک مأموریت انتخاب کن." }
-        require(group.rules.minutes in 5..120) { "زمان بازی باید بین ۵ تا ۱۲۰ دقیقه باشد." }
+        require(group.rules.minutes == 0 || group.rules.minutes in 5..120) { "بدون زمان یا بین ۵ تا ۱۲۰ دقیقه انتخاب کن." }
         require(group.rules.reward.length <= 150 && group.rules.penalty.length <= 150)
     }
     fun normalizedName(name: String) = name.trim().replace('ي','ی').replace('ك','ک').replace("\u200c", "").lowercase()
     fun eligible(m: Mission, rules: Rules, child: Boolean): Boolean =
-        m.style in rules.styles && m.difficulty == rules.difficulty && rules.allowed.containsAll(m.needs) &&
+        MissionQuality.playable(m) && m.style in rules.styles && m.difficulty == rules.difficulty && rules.allowed.containsAll(m.needs) &&
             rules.place in m.places && (!child || m.childSafe)
 
     fun deal(group: Group, pool: List<Mission>, uses: List<ContentUse>, random: Random = Random.Default): List<Assignment> {
@@ -131,6 +132,7 @@ object GameRules {
         return state.copy(active = null, history = (state.history.filterNot { it.id == result.id } + result).takeLast(300))
     }
     fun remaining(s: Session, elapsed: Long, wall: Long, boot: Long): Pair<Long, Boolean> {
+        if (s.rules.minutes == 0) return 0L to false
         if (!s.running) return s.remainingMs to false
         val safe = boot == s.bootId && elapsed >= s.anchorElapsed &&
             kotlin.math.abs((wall-s.anchorWall) - (elapsed-s.anchorElapsed)) < 120_000
@@ -141,4 +143,9 @@ object GameRules {
         val scores = scores(s)
         return scores.filter { it.total == scores.first().total }.map { it.player.id }.toSet()
     }
+}
+
+object MissionQuality {
+    private val administrative=Regex("راهنمای.{0,12}بازی|قوانین.{0,12}بازی|قانون.{0,10}نقشه|ثبت.{0,8}امتیاز|مرتب.{0,12}(میز|وسایل)|چیدن.{0,12}وسایل|توضیح.{0,12}قواعد")
+    fun playable(m:Mission):Boolean=m.contentRevision>=2 && m.twist.length>=12 && !administrative.containsMatchIn(m.goal)
 }

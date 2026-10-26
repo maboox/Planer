@@ -40,7 +40,7 @@ import kotlinx.coroutines.delay
     BackHandler(open){open=false}
     if(!open){
         PageTitle("محرمانه","گوشی رو بده به $name",subtitle)
-        EnvelopeArt()
+        SpyArt()
         Surface(color=Gold,contentColor=Ink,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth()
             .combinedClickable(onClick={},onLongClick={open=true})
             .semantics { onClick(label="بازکردن صفحهٔ خصوصی $name"){open=true;true} }) {
@@ -59,23 +59,27 @@ import kotlinx.coroutines.delay
 }
 
 @Composable fun MissionCard(m:Mission) {
-    PanelCard(light=true) {
-        Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-            Tag(m.style.label,Ink);Tag(m.difficulty.label,Ink)
+    PanelCard {
+        Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
+            Tag("محرمانه",Gold);Spacer(Modifier.weight(1f))
+            Text("هدفِ تو / ${m.difficulty.label}",color=Muted,style=MaterialTheme.typography.labelMedium)
         }
-        Text(m.title,style=MaterialTheme.typography.headlineMedium)
-        MissionSection("مأموریت تو",m.goal)
-        HorizontalDivider(color=Ink.copy(alpha=.12f))
-        MissionSection("موفقیت یعنی",m.success)
-        MissionSection("مجاز است",m.allowed)
-        MissionSection("حساب نیست",m.invalid)
-        MissionSection("مرز بازی",m.boundary)
+        Text(m.title,style=MaterialTheme.typography.headlineLarge,color=Gold)
+        Text(m.style.label,color=Muted,style=MaterialTheme.typography.bodySmall)
+        HorizontalDivider(color=Line)
+        MissionSection("مأموریت تو",m.goal,Cream)
+        if(m.twist.isNotBlank())Note(m.twist,Icons.Rounded.Psychology,Gold)
+        MissionSection("موفقیت یعنی",m.success,Mint)
+        MissionSection("حساب نیست",m.invalid,Coral)
+        HorizontalDivider(color=Line)
+        MissionSection("مجاز است",m.allowed,Muted)
+        Text(m.boundary,color=Muted,style=MaterialTheme.typography.bodySmall)
     }
 }
-@Composable private fun MissionSection(title:String,text:String){
-    Column(verticalArrangement=Arrangement.spacedBy(3.dp)) {
-        Text(title,style=MaterialTheme.typography.labelMedium,color=Ink.copy(alpha=.65f))
-        Text(text,style=MaterialTheme.typography.bodyLarge,color=Ink)
+@Composable private fun MissionSection(title:String,text:String,accent:androidx.compose.ui.graphics.Color){
+    Column(verticalArrangement=Arrangement.spacedBy(5.dp)) {
+        Text(title,style=MaterialTheme.typography.labelMedium,color=accent)
+        Text(text,style=if(title=="مأموریت تو")MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,color=Cream)
     }
 }
 
@@ -103,6 +107,7 @@ import kotlinx.coroutines.delay
         Phase.ACTIVE -> {
             var remaining by remember(s.id){mutableLongStateOf(vm.currentTime(s).first)}
             LaunchedEffect(s.id,s.running,s.anchorElapsed){
+                if(s.rules.minutes==0)return@LaunchedEffect
                 while(true){
                     val (time,uncertain)=vm.currentTime(s);remaining=time
                     if(uncertain){vm.stopUncertainTimer();vm.error.value="ساعت یا وضعیت گوشی تغییر کرده؛ زمان را متوقف کردیم. وقتی آماده بودید ادامه بدهید.";break}
@@ -113,8 +118,19 @@ import kotlinx.coroutines.delay
                     delay(1000)
                 }
             }
-            PageTitle("عملیات ${if(s.running)"در جریانه" else "متوقفه"}",s.groupName,"طبیعی رفتار کن. شک‌کردن آزاده؛ افشا برای آخر دوره.")
-            PanelCard {
+            PageTitle(if(s.rules.minutes==0)"عملیات باز" else "عملیات ${if(s.running)"در جریانه" else "متوقفه"}",s.groupName,"رفتارها عادی‌اند؛ نیت‌ها شاید نه.")
+            if(s.assignments.any{it.mission.contentRevision<2})Note("این دور با مأموریت‌های نسخهٔ قدیمی شروع شده. برای محتوای بازنویسی‌شده، این دور را ببند و بازی تازه بساز.",Icons.Rounded.Info,Gold)
+            if(s.rules.minutes==0)PanelCard {
+                Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(16.dp)){
+                    Icon(Icons.Rounded.AllInclusive,null,tint=Gold,modifier=Modifier.size(54.dp))
+                    Column(Modifier.weight(1f)){
+                        Text("بدون شمارش معکوس",style=MaterialTheme.typography.titleLarge,color=Gold)
+                        Text("پایان با تصمیم جمع",color=Muted,style=MaterialTheme.typography.bodyMedium)
+                    }
+                }
+                Text("فرصتِ مناسب رو پیدا کن. هر وقت جمع آماده بود، سراغ حدس و افشا برید.",color=Muted)
+                Tag("${s.players.size.fa()} نفر / ${s.players.size.fa()} نقشه",Gold)
+            } else PanelCard {
                 Text("زمان باقی‌مانده",color=Muted,modifier=Modifier.fillMaxWidth(),textAlign=TextAlign.Center)
                 Text("%02d:%02d".format((remaining+999)/60000,((remaining+999)/1000)%60).fa(),fontSize=58.sp,fontWeight=FontWeight.Bold,color=Gold,
                     modifier=Modifier.fillMaxWidth(),textAlign=TextAlign.Center)
@@ -158,7 +174,7 @@ import kotlinx.coroutines.delay
             Tag("افشای ${(s.revealIndex+1).fa()} از ${s.players.size.fa()}",Gold)
             Text("نقشهٔ ${player.name} چی بود؟",style=MaterialTheme.typography.headlineLarge)
             if(!s.revealed){
-                EnvelopeArt()
+                SpyArt()
                 PanelCard {
                     Text("اول حدس‌ها، بعد افشا",style=MaterialTheme.typography.titleLarge)
                     if(guessers.isEmpty())Text("کسی برای ${player.name} حدس امتیازی ثبت نکرده.",color=Muted)
@@ -168,7 +184,7 @@ import kotlinx.coroutines.delay
                     }
                     Text("${player.name} تا شنیدن همهٔ حدس‌ها، چیزی را تأیید یا رد نکند.",color=Muted,style=MaterialTheme.typography.bodySmall)
                 }
-                Primary("پاکت ${player.name} رو باز کن",Icons.Rounded.Drafts){
+                Primary("نقشهٔ ${player.name} رو افشا کن",Icons.Rounded.Visibility){
                     if(preferences.haptics)haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     vm.reveal()
                 }
