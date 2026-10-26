@@ -55,7 +55,7 @@
 <p align="center">
   <img src="docs/screenshots/home.png" width="240" alt="خانه" />
   <img src="docs/screenshots/difficulty.png" width="240" alt="سطح مأموریت" />
-  <img src="docs/screenshots/mission.png" width="240" alt="کارت مأموریت خصوصی" />
+  <img src="docs/screenshots/mission-steps.png" width="240" alt="مراحل روشن مأموریت متوسط" />
 </p>
 
 ### نقشه چه فرقی با یک کار ساده دارد؟
@@ -69,7 +69,7 @@
 در سطح سخت، ایده ممکن است از واسطه عبور کند یا بعد از تغییر موضوع برگردد. سختی صرفاً با زیادکردن تعداد افراد ساخته نشده است. [معیار طراحی محتوا](docs/CONTENT_DESIGN.fa.md)
 <p align="center">
   <img src="docs/screenshots/untimed.png" width="240" alt="عملیات بدون زمان" />
-  <img src="docs/screenshots/reveal.png" width="240" alt="افشای مأموریت" />
+  <img src="docs/screenshots/mission.png" width="240" alt="باکس‌های رنگی مجاز و غیرمجاز" />
   <img src="docs/screenshots/results.png" width="240" alt="نتیجه و جدول" />
 </p>
 
